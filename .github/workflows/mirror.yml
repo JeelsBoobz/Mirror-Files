@@ -54,6 +54,8 @@ jobs:
             url: "https://officialchannelfairly.my.id/Source-$latest_version.zip"
 
     steps:
+      - uses: actions/checkout@v4
+
       - name: Downloading files
         run: |
           mkdir ${{ matrix.job.target }}
