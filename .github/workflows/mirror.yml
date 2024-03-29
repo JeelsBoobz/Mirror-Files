@@ -4,74 +4,50 @@ on:
   workflow_dispatch:
   schedule:
     - cron: '0 */1 * * *'
-
 jobs:
-  mirror-source:
-    runs-on: ubuntu-latest
 
-    steps:
-      - name: Get CFairly Version 
-        id: get_version
-        run: |
-          cfairly_version=$(curl -s https://pastebin.com/raw/ZVhQTNhp | jq -r '.latest_version')
-          echo "::set-output name=cfairly_version::$cfairly_version"
-        env:
-          CFAIRLY_VERSION: ${{ steps.get_version.outputs.cfairly_version }}
-
-      - name: Generate matrix job
-        id: generate_matrix
-        run: |
-          cfairly_version=$CFAIRLY_VERSION
-          cat <<EOF > matrix_job.yml
-          matrix:
-            job:
-              - {
-                  id: "1",
-                  target: "ZyGames",
-                  url: "https://zygame.click/icon.zip",
-                }
-              - {
-                  id: "2",
-                  target: "CFairly",
-                  url: "https://officialchannelfairly.my.id/Source_${cfairly_version}.zip"
-                }
-          EOF
-
-  build-and-publish:
-    needs: mirror-source
+  Mirror:
+    permissions: write-all
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
         job:
-          - id: "1"
-            target: "ZyGames"
-            url: "https://zygame.click/icon.zip"
-          - id: "2"
-            target: "CFairly"
-            url: "https://officialchannelfairly.my.id/Source_${{ env.CFAIRLY_VERSION }}.zip"
+          - {
+              id: "1",
+              target: "ZyGames",
+            }
+          - {
+              id: "2",
+              target: "CFairly",
+            }
 
     steps:
+      - uses: actions/checkout@v4
+
       - name: Downloading files
+        if: ${{ matrix.job.target=='ZyGames' }}
         run: |
-          mkdir ${{ matrix.job.target }}
-          cd ${{ matrix.job.target }}
-          URL=${{ matrix.job.url }}
+          mkdir ZyGames
+          cd ZyGames
+          URL="https://zygame.click/icon.zip"
           bash ../download $(basename ${URL}) ${URL}
 
       - name: Delete tag if exists
-        if: ${{ success() }}
+        if: ${{ success() && matrix.job.target=='ZyGames' }}
         uses: dev-drprasad/delete-tag-and-release@v1.0
         with:
-          tag_name: ${{ matrix.job.target }}
+          tag_name: ZyGames
           delete_release: true
           github_token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Upload Release
-        if: ${{ success() }}
+        id: ZyGames
+        if: ${{ success() && matrix.job.target=='ZyGames' }}
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: ${{ matrix.job.target }}
-          files: ${{ matrix.job.target }}/*
+          tag_name: ZyGames
+          files: ZyGames/*
           draft: false
           prerelease: true
           generate_release_notes: true
@@ -79,9 +55,47 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Publish release
-        if: ${{ success() }}
+        if: ${{ success() && matrix.job.target=='ZyGames' }}
         uses: JeelsBoobz/publish-release@v1.1.3
-        with:
-          id: ${{ steps.publish.outputs.id }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          id: ${{ steps.ZyGames.outputs.id }}
+
+      - name: Downloading files
+        if: ${{ matrix.job.target=='CFairly' }}
+        run: |
+          mkdir CFairly
+          cd CFairly
+          VERSION=$(curl -s https://pastebin.com/raw/ZVhQTNhp | jq -r '.latest_version')
+          URL="https://officialchannelfairly.my.id/Source_${VERSION}.zip"
+          bash ../download $(basename ${URL}) ${URL}
+
+      - name: Delete tag if exists
+        if: ${{ success() && matrix.job.target=='CFairly' }}
+        uses: dev-drprasad/delete-tag-and-release@v1.0
+        with:
+          tag_name: CFairly
+          delete_release: true
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload Release
+        id: CFairly
+        if: ${{ success() && matrix.job.target=='CFairly' }}
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: CFairly
+          files: CFairly/*
+          draft: false
+          prerelease: true
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Publish release
+        if: ${{ success() && matrix.job.target=='CFairly' }}
+        uses: JeelsBoobz/publish-release@v1.1.3
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          id: ${{ steps.CFairly.outputs.id }}
