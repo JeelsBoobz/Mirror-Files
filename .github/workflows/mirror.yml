@@ -31,7 +31,7 @@ jobs:
               - {
                   id: "2",
                   target: "CFairly",
-                  url: "https://officialchannelfairly.my.id/Source-$latest_version.zip"
+                  url: "https://officialchannelfairly.my.id/Source-${latest_version}.zip"
                 }
           EOF
 
@@ -51,7 +51,7 @@ jobs:
             url: "https://zygame.click/icon.zip"
           - id: "2"
             target: "CFairly"
-            url: "https://officialchannelfairly.my.id/Source-$latest_version.zip"
+            url: "https://officialchannelfairly.my.id/Source-${latest_version}.zip"
 
     steps:
       - uses: actions/checkout@v4
