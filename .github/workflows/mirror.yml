@@ -41,7 +41,7 @@ jobs:
       - name: Upload Release
         id: CFairly
         if: ${{ success() && matrix.job.target=='CFairly' }}
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2
         with:
           tag_name: CFairly
           files: CFairly/*
