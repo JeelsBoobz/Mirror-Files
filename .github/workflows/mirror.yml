@@ -4,13 +4,12 @@ on:
   workflow_dispatch:
   schedule:
     - cron: '0 */1 * * *'
+
 jobs:
-  update-source:
+  mirror-source:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
-
       - name: Get latest version
         id: get_version
         run: |
@@ -32,7 +31,7 @@ jobs:
               - {
                   id: "2",
                   target: "CFairly",
-                  url: "https://officialchannelfairly.my.id/Source_$latest_version.zip"
+                  url: "https://officialchannelfairly.my.id/Source-$latest_version.zip"
                 }
           EOF
 
@@ -41,6 +40,20 @@ jobs:
         run: |
           cat matrix_job.yml
 
+  build-and-publish:
+    needs: mirror-source
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        job:
+          - id: "1"
+            target: "ZyGames"
+            url: "https://zygame.click/icon.zip"
+          - id: "2"
+            target: "CFairly"
+            url: "https://officialchannelfairly.my.id/Source-$latest_version.zip"
+
+    steps:
       - name: Downloading files
         run: |
           mkdir ${{ matrix.job.target }}
@@ -57,7 +70,6 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Upload Release
-        id: publish
         if: ${{ success() }}
         uses: softprops/action-gh-release@v2
         with:
