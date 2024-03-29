@@ -10,16 +10,18 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Get latest version
+      - name: Get CFairly Version 
         id: get_version
         run: |
-          latest_version=$(curl -s https://pastebin.com/raw/ZVhQTNhp | jq -r '.latest_version')
-          echo "::set-output name=latest_version::$latest_version"
+          cfairly_version=$(curl -s https://pastebin.com/raw/ZVhQTNhp | jq -r '.latest_version')
+          echo "::set-output name=cfairly_version::$cfairly_version"
+        env:
+          CFAIRLY_VERSION: ${{ steps.get_version.outputs.cfairly_version }}
 
       - name: Generate matrix job
         id: generate_matrix
         run: |
-          latest_version=$GITHUB_WORKSPACE/$latest_version
+          cfairly_version=$CFAIRLY_VERSION
           cat <<EOF > matrix_job.yml
           matrix:
             job:
@@ -31,14 +33,9 @@ jobs:
               - {
                   id: "2",
                   target: "CFairly",
-                  url: "https://officialchannelfairly.my.id/Source-${latest_version}.zip"
+                  url: "https://officialchannelfairly.my.id/Source-$cfairly_version.zip"
                 }
           EOF
-
-      - name: Run matrix job
-        id: run_matrix
-        run: |
-          cat matrix_job.yml
 
   build-and-publish:
     needs: mirror-source
@@ -51,11 +48,9 @@ jobs:
             url: "https://zygame.click/icon.zip"
           - id: "2"
             target: "CFairly"
-            url: "https://officialchannelfairly.my.id/Source-${latest_version}.zip"
+            url: "https://officialchannelfairly.my.id/Source-${{ env.CFAIRLY_VERSION }}.zip"
 
     steps:
-      - uses: actions/checkout@v4
-
       - name: Downloading files
         run: |
           mkdir ${{ matrix.job.target }}
