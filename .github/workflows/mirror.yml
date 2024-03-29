@@ -1,4 +1,4 @@
-name: Update CFairly Source
+name: Mirror
 
 on:
   workflow_dispatch:
