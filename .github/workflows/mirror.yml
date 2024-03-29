@@ -15,51 +15,36 @@ jobs:
         job:
           - {
               id: "1",
-              target: "knmod",
-              type: "vip",
-            }
-          - {
-              id: "2",
-              target: "fakecez",
-              type: "vip",
-            }
-          - {
-              id: "3",
-              target: "senju",
-              type: "vip",
-            }
-          - {
-              id: "4",
-              target: "novuz",
-              type: "vip",
+              target: "CFairly",
             }
 
     steps:
       - uses: actions/checkout@v4
 
       - name: Downloading KNMOD VIP
-        if: ${{ matrix.job.target=='knmod' && matrix.job.type=='vip' }}
+        if: ${{ matrix.job.target=='CFairly' }}
         run: |
-          mkdir KNMODVIP
-          cd KNMODVIP
-          URL="https://knmod.com/file_kn/lib/knnew.zip"
+          mkdir CFairly
+          cd CFairly
+          VERSION=$(curl -s https://pastebin.com/raw/ZVhQTNhp | jq -r '.latest_version')
+          URL="https://officialchannelfairly.my.id/Source_${VERSION}.zip"
           bash ../download $(basename ${URL}) ${URL}
 
       - name: Delete tag if exists
-        if: ${{ success() && matrix.job.target=='knmod' && matrix.job.type=='vip' }}
+        if: ${{ success() && matrix.job.target=='CFairly' }}
         uses: dev-drprasad/delete-tag-and-release@v1.0
         with:
-          tag_name: MLBB-KNMOD-VIP
+          tag_name: CFairly
           delete_release: true
           github_token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Upload Release
-        id: release_knmod_vip
-        if: ${{ success() && matrix.job.target=='knmod' && matrix.job.type=='vip' }}
+        id: CFairly
+        if: ${{ success() && matrix.job.target=='CFairly' }}
         uses: softprops/action-gh-release@v1
         with:
-          tag_name: MLBB-KNMOD-VIP
-          files: KNMODVIP/*
+          tag_name: CFairly
+          files: CFairly/*
           draft: false
           generate_release_notes: true
         env:
@@ -71,112 +56,4 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          id: ${{ steps.release_knmod_vip.outputs.id }}
-
-      - name: Downloading Fakecez VIP
-        if: ${{ matrix.job.target=='fakecez' && matrix.job.type=='vip' }}
-        run: |
-          mkdir FakecezVIP
-          cd FakecezVIP
-          URL="https://fakecez.com/VIPPROJECT/Fakecez/exfile.zip"
-          bash ../download $(basename ${URL}) ${URL}
-
-      - name: Delete tag if exists
-        if: ${{ success() && matrix.job.target=='fakecez' && matrix.job.type=='vip' }}
-        uses: dev-drprasad/delete-tag-and-release@v1.0
-        with:
-          tag_name: MLBB-FAKECEZ-VIP
-          delete_release: true
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Upload Release
-        id: release_fakecez_vip
-        if: ${{ success() && matrix.job.target=='fakecez' && matrix.job.type=='vip' }}
-        uses: softprops/action-gh-release@v1
-        with:
-          tag_name: MLBB-FAKECEZ-VIP
-          files: FakecezVIP/*
-          draft: false
-          generate_release_notes: true
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Publish release
-        if: ${{ success() && matrix.job.target=='fakecez' && matrix.job.type=='vip' }}
-        uses: StuYarrow/publish-release@v1.1.2
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          id: ${{ steps.release_fakecez_vip.outputs.id }}
-
-      - name: Downloading Senju VIP
-        if: ${{ matrix.job.target=='senju' && matrix.job.type=='vip' }}
-        run: |
-          mkdir SenjuVIP
-          cd SenjuVIP
-          URL="https://fakecez.com/VIPPROJECT/Senju/exfile.zip"
-          bash ../download $(basename ${URL}) ${URL}
-
-      - name: Delete tag if exists
-        if: ${{ success() && matrix.job.target=='senju' && matrix.job.type=='vip' }}
-        uses: dev-drprasad/delete-tag-and-release@v1.0
-        with:
-          tag_name: MLBB-SENJU-VIP
-          delete_release: true
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Upload Release
-        id: release_senju_vip
-        if: ${{ success() && matrix.job.target=='senju' && matrix.job.type=='vip' }}
-        uses: softprops/action-gh-release@v1
-        with:
-          tag_name: MLBB-SENJU-VIP
-          files: SenjuVIP/*
-          draft: false
-          generate_release_notes: true
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Publish release
-        if: ${{ success() && matrix.job.target=='senju' && matrix.job.type=='vip' }}
-        uses: StuYarrow/publish-release@v1.1.2
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          id: ${{ steps.release_senju_vip.outputs.id }}
-
-      - name: Downloading Novuz VIP
-        if: ${{ matrix.job.target=='novuz' && matrix.job.type=='vip' }}
-        run: |
-          mkdir NovuzVIP
-          cd NovuzVIP
-          URL="https://fakecez.com/VIPPROJECT/Novuz/exfile.zip"
-          bash ../download $(basename ${URL}) ${URL}
-
-      - name: Delete tag if exists
-        if: ${{ success() && matrix.job.target=='novuz' && matrix.job.type=='vip' }}
-        uses: dev-drprasad/delete-tag-and-release@v1.0
-        with:
-          tag_name: MLBB-NOVUZ-VIP
-          delete_release: true
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Upload Release
-        id: release_novuz_vip
-        if: ${{ success() && matrix.job.target=='novuz' && matrix.job.type=='vip' }}
-        uses: softprops/action-gh-release@v1
-        with:
-          tag_name: MLBB-NOVUZ-VIP
-          files: NovuzVIP/*
-          draft: false
-          generate_release_notes: true
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Publish release
-        if: ${{ success() && matrix.job.target=='novuz' && matrix.job.type=='vip' }}
-        uses: StuYarrow/publish-release@v1.1.2
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          id: ${{ steps.release_novuz_vip.outputs.id }}
+          id: ${{ steps.CFairly.outputs.id }}
