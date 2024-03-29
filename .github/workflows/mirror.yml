@@ -33,7 +33,7 @@ jobs:
               - {
                   id: "2",
                   target: "CFairly",
-                  url: "https://officialchannelfairly.my.id/Source-$cfairly_version.zip"
+                  url: "https://officialchannelfairly.my.id/Source_$cfairly_version.zip"
                 }
           EOF
 
@@ -48,7 +48,7 @@ jobs:
             url: "https://zygame.click/icon.zip"
           - id: "2"
             target: "CFairly"
-            url: "https://officialchannelfairly.my.id/Source-${{ env.CFAIRLY_VERSION }}.zip"
+            url: "https://officialchannelfairly.my.id/Source_${{ env.CFAIRLY_VERSION }}.zip"
 
     steps:
       - name: Downloading files
