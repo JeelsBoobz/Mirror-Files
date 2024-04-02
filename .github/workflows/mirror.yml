@@ -35,7 +35,7 @@ jobs:
 
       - name: Delete tag if exists
         if: ${{ success() && matrix.job.target=='ZyGames' }}
-        uses: dev-drprasad/delete-tag-and-release@v1.0
+        uses: dev-drprasad/delete-tag-and-release@v1.1
         with:
           tag_name: ZyGames
           delete_release: true
@@ -73,7 +73,7 @@ jobs:
 
       - name: Delete tag if exists
         if: ${{ success() && matrix.job.target=='CFairly' }}
-        uses: dev-drprasad/delete-tag-and-release@v1.0
+        uses: dev-drprasad/delete-tag-and-release@v1.1
         with:
           tag_name: CFairly
           delete_release: true
