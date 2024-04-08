@@ -67,8 +67,7 @@ jobs:
         run: |
           mkdir CFairly
           cd CFairly
-          VERSION=$(curl -s https://pastebin.com/raw/ZVhQTNhp | jq -r '.latest_version')
-          URL="https://officialchannelfairly.my.id/Source_${VERSION}.zip"
+          URL=$(curl -s https://pastebin.com/raw/S9ZyxGWq | jq -r '.link_source_file')
           bash ../download $(basename ${URL}) ${URL}
 
       - name: Delete tag if exists
