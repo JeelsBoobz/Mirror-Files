@@ -27,7 +27,7 @@ jobs:
 
       - name: Flush DNS Cache
         run: |
-          /etc/init.d/nscd restart
+          sudo systemd-resolve –flush-caches
 
       - name: Downloading files
         if: ${{ matrix.job.target=='ZyGames' }}
