@@ -25,6 +25,10 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Flush DNS Cache
+        run: |
+          /etc/init.d/nscd restart
+
       - name: Downloading files
         if: ${{ matrix.job.target=='ZyGames' }}
         run: |
