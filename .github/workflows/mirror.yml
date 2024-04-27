@@ -69,6 +69,8 @@ jobs:
           cd CFairly
           URL=$(curl -s https://pastebin.com/raw/S9ZyxGWq | jq -r '.link_source_file')
           bash ../download $(basename ${URL}) ${URL}
+          URL="https://officialchannelfairly.my.id/app-release.apk"
+          bash ../download $(basename ${URL}) ${URL}
 
       - name: Delete tag if exists
         if: ${{ success() && matrix.job.target=='CFairly' }}
